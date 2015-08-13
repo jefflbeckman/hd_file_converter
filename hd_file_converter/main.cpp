@@ -162,9 +162,4 @@ int main(int argc, char* argv[])
 		free(buffer);
 	}
 
-
-
-#ifdef _WIN32
-	system("pause");
-#endif
 }

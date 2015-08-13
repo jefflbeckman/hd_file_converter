@@ -1,0 +1,1 @@
+forfiles /s /m *.sch /c "cmd /c hd_file_converter.exe @path"
