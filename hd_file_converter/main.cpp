@@ -73,10 +73,6 @@ int main(int argc, char* argv[])
 	FILE* in_file;
 	FILE* out_file;
 
-#ifdef _WIN32
-	system("cls");
-#endif
-
 
 	if (argc < 2)
 	{
