@@ -25,7 +25,7 @@ bool validate_filename(char* path_buffer)
 	return (strcmp(ext, ".sch") == 0 && strlen(fname) == 8 && strspn(fname, "0123456789") == strlen(fname));
 }
 
-void modify_channelID_in_filename(char* pathdest, char* pathsrc)
+bool modify_channelID_in_filename(char* pathdest, char* pathsrc)
 {
 	//shameless taken from msdn example https://msdn.microsoft.com/en-us/library/sh8yw82b%28v=vs.71%29.aspx
 	char path_buffer[_MAX_PATH];
@@ -37,11 +37,40 @@ void modify_channelID_in_filename(char* pathdest, char* pathsrc)
 	_splitpath(pathsrc, drive, dir, fname, ext);
 
 	int HDchannel = 100 - ((atoi(fname) / 1000) % 100);
-	/* lexical shifting of digits then manually put them in place in the filename*/
+
+	//Frome phone call with TB, these are the channel names to change
+	// ESPN 01->13
+	// ESPN 12->14
+	// TBS 03->15
+	bool changed = 0;
+	if (fname[3] == '0')
+	{
+		if(fname[4] == '1')
+		{
+			fname[3] = '1';
+			fname[4] = '3';
+			changed = true;
+		}
+		else if (fname[4] == '3')
+		{
+			fname[3] = '1';
+			fname[4] = '5';
+			changed = true;
+		}
+	}
+	else if (fname[3] == '1' && fname[4] == '2')
+	{
+		fname[4] = '4';
+		changed = true;
+	}
+	
+	/* lexical shifting of digits then manually put them in place in the filename per directions in email
 	fname[3] = ((HDchannel / 10) % 10) + '0';
 	fname[4] = ((HDchannel / 1) % 10) + '0';
-	
+	*/
+
 	_makepath(pathdest, drive, dir, fname, ext);
+	return changed;
 }
 
 void backup_filename(char* pathdest, char* pathsrc)
@@ -143,7 +172,7 @@ int main(int argc, char* argv[])
 			}
 			else
 			{
-				std::cout << "potential incorrect record found in line " << line_no << " in file " << filepath << std::endl;
+				//std::cout << "potential incorrect record found in line " << line_no << " in file " << filepath << std::endl;
 			}
 
 			token = strtok(NULL, "\r\n");
